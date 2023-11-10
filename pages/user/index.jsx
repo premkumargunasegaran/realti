@@ -14,10 +14,7 @@ export default function index() {
   const [user, setuser] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [favorite, setfavorite] = useState()
-
-
-
+  const [favorite, setfavorite] = useState();
 
   const dispatch = useDispatch();
 
@@ -29,13 +26,15 @@ export default function index() {
         );
         setuser(response.data.results);
         setLoading(false);
-        const favorite = localStorage.getItem("favorites");
-        console.log(favorite);
+        if (typeof window !== "undefined") {
+          const storedFavorites = localStorage.getItem("favorite");
+          setfavorite(storedFavorites ? JSON.parse(storedFavorites) : []);
+        }
       } catch (error) {
         console.log(error);
       }
     };
-    getRandomColor()
+    getRandomColor();
     getdata();
   }, [currentPage]);
 
@@ -46,22 +45,25 @@ export default function index() {
 
   const handleAddToFavorites = (user) => {
     dispatch(addToFavorites(user));
+    setfavorite((data) => {
+      return [...data, user];
+    });
+    favorite.push(user);
+    localStorage.setItem("favorite", JSON.stringify(favorite));
   };
-
-  console.log(favorite);
   return (
     <>
       {loading ? (
         <Loader />
       ) : (
         <>
-          <div className="flex flex-wrap mt-5">
+          <div className="flex flex-wrap mt-5 justify-center">
             {user ? (
               user.map((user, index) => {
                 return (
                   <div
                     key={index}
-                    className="font-sans lg:w-1/4 pr-4 pl-4 md:w-1/2  mb-4 relative
+                    className="font-sans lg:w-1/4 pr-4 pl-4 md:w-1/2  mb-4 relative flex justify-center items-center
             "
                   >
                     <div className="max-w-xs  bg-white shadow-lg rounded-bl-xl rounded-br-xl shadow-xl overflow-hidden ">
@@ -70,10 +72,13 @@ export default function index() {
                           className="flex justify-end w-full"
                           onClick={() => handleAddToFavorites(user)}
                         >
-                          {}
-                          <AiTwotoneHeart className="me-4 mt-4 text-white w-5 h-5" />
-
-                          <AiOutlineHeart className="me-4 mt-4 text-white w-5 h-5" />
+                          {favorite?.length > 0 &&
+                          favorite?.filter((data) => data?.name === user?.name)
+                            ?.length > 0 ? (
+                            <AiTwotoneHeart className="me-4 mt-4 text-white w-5 h-5" />
+                          ) : (
+                            <AiOutlineHeart className="me-4 mt-4 text-white w-5 h-5" />
+                          )}
                         </div>
                       </div>
                       <div className="text-center mt-4 p-4">
@@ -111,10 +116,11 @@ export default function index() {
                             href={`/user/${index + 1}`}
                             className="w-full block "
                           >
-                            {" "}
-                            <a className="flex justify-center items-center gap-3">
-                              <AiFillEye /> View
-                            </a>
+                           
+                            <div className="flex justify-center items-center gap-3">
+                              <AiFillEye />{" "}
+                              View
+                            </div>
                           </Link>
                         </button>
                       </div>
