@@ -116,10 +116,8 @@ export default function index() {
                             href={`/user/${index + 1}`}
                             className="w-full block "
                           >
-                           
                             <div className="flex justify-center items-center gap-3">
-                              <AiFillEye />{" "}
-                              View
+                              <AiFillEye /> View
                             </div>
                           </Link>
                         </button>
