@@ -8,7 +8,7 @@ import Link from "next/link";
 import Pagination from "../component/Paginations/Pagination";
 import getRandomColor from "../component/randomcolor/RandomColor";
 import { useDispatch, useSelector } from "react-redux";
-import { addToFavorites } from "../feature/favoritesSlice";
+import { addToFavorites } from "../../feature/favoritesSlice";
 
 export default function index() {
   const [user, setuser] = useState([]);
