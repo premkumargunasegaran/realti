@@ -7,15 +7,15 @@ import Link from "next/link";
 import { BsArrowLeft } from "react-icons/bs";
 import axios from "axios";
 import Loader from "../component/Loader/Loader";
-import getRandomColor from "../component/randomcolor/RandomColor";
-
-
 
 export default function index() {
   const router = useRouter();
   const id = router.query.id;
   const [user, setuser] = useState("");
   const [loading, setLoading] = useState(true);
+  const [flims, setflims] = useState([]);
+  const [singlemovie, setsinglemovie] = useState([]);
+
 
   useEffect(() => {
     const getdata = async () => {
@@ -35,9 +35,25 @@ export default function index() {
     };
 
     // Call the function to fetch data for all films
-
+    fetchData();
     getdata();
-  }, [id]);
+  }, [id, flims]);
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const responses = await Promise.all(flims.map((url) => fetch(url)));
+
+      // Use Promise.all to convert the responses to JSON concurrently
+      const data = await Promise.all(
+        responses.map((response) => response.json())
+      );
+
+      setsinglemovie(data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
   return (
     <>
@@ -47,15 +63,13 @@ export default function index() {
             {/* <!-- Sidebar content here --> */}
 
             <div className="p-4 mt-6">
-              <div
-                className="w-28 h-28 rounded flex justify-center items-center text-white  rounded-full border border-8 border-color-white mx-auto my-0 opacity-90"
-                style={{ backgroundColor: getRandomColor() }}
-              >
+              <div className="w-28 h-28 rounded flex justify-center items-center text-white  rounded-full border border-8 border-color-white mx-auto my-0 opacity-90 bg-gray-500">
                 <strong>{user.name.charAt(0)}</strong>
               </div>
 
-              
-              <h3 className="text-2xl font-bold text-center mt-5">{user.name}</h3>
+              <h3 className="text-2xl font-bold text-center mt-5">
+                {user.name}
+              </h3>
               <p className="pt-5 text-center">
                 <strong>Male</strong>
               </p>
@@ -147,41 +161,62 @@ export default function index() {
                   </h5>
                 </div>
               </div>
-              
             </div>
             <hr className="mt-5" />
             <h2 className="p-4 text-lg">
               <strong className="">Movies</strong>
             </h2>
             <div className="grid grid-cols-3 gap-3 px-5">
-              <div
-                className="card  bg-base-100 border border-gray-300 rounded-md  border-solid p-7      
-"
-              >
-                <div className="card-body">
-                  <h5 className="card-title">
-                    <strong>
-                      Movie name : <span className="text-orange-500">red</span>
-                    </strong>
-                  </h5>
-                  <p>
-                    <strong>
-                      Directer : <span className="text-orange-500">prem</span>
-                    </strong>
-                  </p>
-                  <p>
-                    <strong>
-                      Producer : <span className="text-orange-500">prem</span>
-                    </strong>
-                  </p>
-                  <p>
-                    <strong>
-                      Release date :{" "}
-                      <span className="text-orange-500">prem</span>
-                    </strong>
-                  </p>
-                </div>
-              </div>
+              {singlemovie ? (
+                <>
+                  {singlemovie.map((movie, index) => {
+                    return (
+                      <div
+                        key={index}
+                        className="card  bg-base-100 border border-gray-300 rounded-md  border-solid p-7      
+    "
+                      >
+                        <div className="card-body">
+                          <h5 className="card-title">
+                            <strong>
+                              Movie name :{" "}
+                              <span className="text-orange-500">
+                                {movie.title}
+                              </span>
+                            </strong>
+                          </h5>
+                          <p>
+                            <strong>
+                              Directer :{" "}
+                              <span className="text-orange-500">
+                                {movie.director}
+                              </span>
+                            </strong>
+                          </p>
+                          <p>
+                            <strong>
+                              Producer :{" "}
+                              <span className="text-orange-500">
+                                {movie.producer}
+                              </span>
+                            </strong>
+                          </p>
+                          <p>
+                            <strong>
+                              Release date :{" "}
+                              <span className="text-orange-500">
+                                {movie.release_date}
+                              </span>
+                            </strong>
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </>
+              ) : (
+                <Loader />
+              )}
             </div>
           </div>
         </div>

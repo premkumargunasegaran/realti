@@ -15,15 +15,9 @@ export default function index() {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [favorite, setfavorite] = useState()
-  // if (!localStorage.getItem("favorite")) {
-  //   localStorage.setItem("favorite", "[]");
-  // }
 
-  // useEffect(() => {
-  //   const [favorite, setfavorite] = useState(
-  //     JSON.parse(localStorage.getItem("favorite"))
-  //   );
-  // },[]);
+
+
 
   const dispatch = useDispatch();
 
@@ -41,7 +35,7 @@ export default function index() {
         console.log(error);
       }
     };
-
+    getRandomColor()
     getdata();
   }, [currentPage]);
 

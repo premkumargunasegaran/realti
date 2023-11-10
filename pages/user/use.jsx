@@ -1,59 +1,41 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from 'react';
 
-const UserList = () => {
-  const initialUsers = [
-    { id: 1, name: "John Doe" },
-    { id: 2, name: "Jane Doe" },
-    // Add more users as needed
+const YourComponent = () => {
+  const [todos, settodos] = useState([])
+  const apiUrls = [
+    "https://swapi.dev/api/films/2/",
+		"https://swapi.dev/api/films/6/",
+		"https://swapi.dev/api/films/3/",
+		"https://swapi.dev/api/films/1/",
+		"https://swapi.dev/api/films/7/"
   ];
-
-  const [users, setUsers] = useState(initialUsers);
-  const [favorites, setFavorites] = useState([]);
-
-//   useEffect(() => {
-//     // Load favorites from local storage on component mount
-//     const get = () =>{
-//         const storedFavorites = localStorage.getItem("favorites");
-//         return storedFavorites ? JSON.parse(storedFavorites) : [];
-//      }
-//      get()
-//     // setFavorites(storedFavorites);
-//   }, []);
-
-
-  useEffect(() => {
-    // Save favorites to local storage whenever favorites change
-    // localStorage.setItem("favorites", JSON.stringify(favorites));
-  }, [favorites]);
-
-  const addToFavorites = (user) => {
-    setFavorites([...favorites, user]);
-    localStorage.setItem("favorites", JSON.stringify(favorites) )
- 
+  
+  const fetchData = async () => {
+    try {
+      // Use Promise.all to fetch data from multiple APIs concurrently
+      const responses = await Promise.all(apiUrls.map(url => fetch(url)));
+  
+      // Use Promise.all to convert the responses to JSON concurrently
+      const data = await Promise.all(responses.map(response => response.json()));
+  
+      // Now, 'data' is an array containing the data from all APIs
+      console.log(data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
   };
+  
+  // Call the function to initiate the API requests
+  fetchData();
+  
+  console.log(todos);
 
   return (
     <div>
-      <h2>User List</h2>
-      <ul>
-        {users.map((user) => (
-          <li key={user.id}>
-            {user.name}{" "}
-            <button onClick={() => addToFavorites(user)}>
-              Add to Favorites
-            </button>
-          </li>
-        ))}
-      </ul>
-
-      <h2>Favorites</h2>
-      <ul>
-        {favorites.map((favorite) => (
-          <li key={favorite.id}>{favorite.name}</li>
-        ))}
-      </ul>
+      {/* Your component content */}
+     prem
     </div>
   );
 };
 
-export default UserList;
+export default YourComponent;
